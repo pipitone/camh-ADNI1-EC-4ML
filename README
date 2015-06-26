@@ -5,8 +5,8 @@ Registered images:  /projects/nikhil/EC_data/mni_registered_data
 Segmentations: /projects/nikhil/EC_data/CompleteADNIScreeningData
 
  - candidate_labels/ - a copy of all tarballs from nikhil
- - transformed_candidates - candidate labels in mni space
- - transformed_fused - fused labels in mni space
+ - mni_candidates - candidate labels in mni space
+ - mni_fused - fused labels in mni space
 
 ## Prepare candidate labels
 
@@ -16,15 +16,18 @@ Segmentations: /projects/nikhil/EC_data/CompleteADNIScreeningData
 
 ## Transforming candidate labels into mni space: 
 
-  mkdir transformed_candidates
+  mkdir mni_candidates
   # loop over each tarball, resample, and tar
   for i in candidate_labels/*.tar; do 
-    echo ./transform_candidates.sh $i transformed_candidates/$(basename $i); 
+    echo ./transform_candidates.sh $i mni_candidates/$(basename $i); 
   done | parallel -j24
 
 ## Transforming fused labels into mni space: 
 
-  mkdir transformed_fused
+  mkdir mni_fused
   ./transform_fused.sh | parallel -j24
   
 
+## Get bounding box for candidate labels
+
+  mincmath -max -quiet mni_fused/* maxfused.mnc

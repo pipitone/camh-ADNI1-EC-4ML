@@ -2,7 +2,7 @@
 # Transforms candidate labels in a tarbal
 
 native=$PWD/fused_labels
-dest=$PWD/transformed_fused
+dest=$PWD/mni_fused
 
 model=/opt/quarantine/CIVET/1.1.12/build/share/mni-models/mni_adni_t1w_tal_nlin_asym.mnc
 
