@@ -1,0 +1,30 @@
+A project to prepare Entorhinal Cortex segmentations of ADNI images for machine
+learning applications. 
+
+Registered images:  /projects/nikhil/EC_data/mni_registered_data
+Segmentations: /projects/nikhil/EC_data/CompleteADNIScreeningData
+
+ - candidate_labels/ - a copy of all tarballs from nikhil
+ - transformed_candidates - candidate labels in mni space
+ - transformed_fused - fused labels in mni space
+
+## Prepare candidate labels
+
+  mkdir candidate_labels 
+  cp -s /projects/nikhil/EC_data/CompleteADNIScreeningData/batch*/* \
+    candidate_labels/
+
+## Transforming candidate labels into mni space: 
+
+  mkdir transformed_candidates
+  # loop over each tarball, resample, and tar
+  for i in candidate_labels/*.tar; do 
+    echo ./transform_candidates.sh $i transformed_candidates/$(basename $i); 
+  done | parallel -j24
+
+## Transforming fused labels into mni space: 
+
+  mkdir transformed_fused
+  ./transform_fused.sh | parallel -j24
+  
+
