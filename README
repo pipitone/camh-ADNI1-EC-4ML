@@ -37,7 +37,7 @@ Segmentations: /projects/nikhil/EC_data/CompleteADNIScreeningData
   ./hdfify.py --mask mask.mnc mni_fused/ fused_labels.h5
 
   for i in mni_candidates/*.tar; do 
-    echo ./hdfify.py --mask mask.mnc $i mni_candidates/$(basename $i .tar).h5; 
-  done | parallel -j24
+    echo ./hdf_candidates.sh $i mni_candidates/$(basename $i .tar).h5; 
+  done  | parallel -j24
 
   ./hdfmerge.py mni_candidates/ candidate_labels.h5
