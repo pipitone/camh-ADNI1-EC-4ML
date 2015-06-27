@@ -4,10 +4,15 @@
 Reads a bunch of label files and stores in HDF5 format. 
 
 Usage: 
-    hd5ify.py [options] <imagedir> <hfile.h5>
+    hd5ify.py [options] <mask> <labelval> <imagedir> <hfile.h5>
+
+Arguments: 
+    <mask>                Mask for 1st stage filtering
+    <labelval>            Label to select from the mask when computing bounding box
+    <imagedir>            Folder full of minc label files
+    <hfile.h5>            Output file. 
 
 Options:
-    --mask MASK           Mask for 1st stage filtering [default: average-mask.mnc]
     --maskpad N           Number of voxels to pad around the mask bbox [default: 5]
     --progress-freq N     Show progress every N images processed [default: 500]
 """
@@ -21,10 +26,11 @@ def progress(complete,total,duration,period):
 if __name__ == '__main__':
 
     arguments = docopt(__doc__) 
-    maskfile = arguments['--mask']
-    maskpad  = int(arguments['--maskpad'])
+    maskfile = arguments['<mask>']
+    labelval = int(arguments['<labelval>'])
     imagedir = arguments['<imagedir>']
     datafile = arguments['<hfile.h5>']
+    maskpad  = int(arguments['--maskpad'])
     printfreq         = int(arguments['--progress-freq'])
 
     print "Loading libraries..."
@@ -53,7 +59,7 @@ if __name__ == '__main__':
     fullmask = volumeFromFile(maskfile).data
 
     # compute bounding box
-    maskidx = np.argwhere(fullmask)
+    maskidx = np.argwhere(np.logical_and(fullmask > labelval - .5, fullmask < labelval + .5))
     minidx = maskidx.min(0) - maskpad
     maxidx = maskidx.max(0) + maskpad 
     mask = fullmask[minidx[0]:maxidx[0],minidx[1]:maxidx[1],minidx[2]:maxidx[2]]
@@ -94,6 +100,6 @@ if __name__ == '__main__':
             data = volumeFromFile(labelfile).data[
                 minidx[0]:maxidx[0],
                 minidx[1]:maxidx[1],
-                minidx[2]:maxidx[2]] > 0
-
+                minidx[2]:maxidx[2]] == labelval
+            data = np.logical_and(data > labelval - .5, data < labelval + .5)
             dataarray.append(data[np.newaxis,:])
