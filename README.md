@@ -50,8 +50,12 @@ Segmentations: /projects/nikhil/EC_data/CompleteADNIScreeningData
     ./remove_outliers.py candidate_labels_l.h5 cleaned_candidate_labels_l.h5
     ./remove_outliers.py candidate_labels_r.h5 cleaned_candidate_labels_r.h5
 
-## Added classes and IDs 
+## Add classes and IDs 
 
     ./add-classes.py cleaned_candidate_labels_r.h5
     ./add-classes.py cleaned_candidate_labels_l.h5
 
+## Divide into train, test and validation sets
+
+    ./make-training-sets.py cleaned_candidate_labels_l.h5 training_l.h5
+    ./make-training-sets.py cleaned_candidate_labels_r.h5 training_r.h5
