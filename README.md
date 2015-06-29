@@ -29,7 +29,7 @@ Segmentations: /projects/nikhil/EC_data/CompleteADNIScreeningData
 
 ## Get bounding box for candidate labels
 
-  mincmath -max -quiet mni_fused/* mask.mnc
+    mincmath -max -quiet mni_fused/* mask.mnc
 
 ## Convert labels to hdf5 (and crop)
 
@@ -49,3 +49,9 @@ Segmentations: /projects/nikhil/EC_data/CompleteADNIScreeningData
 
     ./remove_outliers.py candidate_labels_l.h5 cleaned_candidate_labels_l.h5
     ./remove_outliers.py candidate_labels_r.h5 cleaned_candidate_labels_r.h5
+
+## Added classes and IDs 
+
+    ./add-classes.py cleaned_candidate_labels_r.h5
+    ./add-classes.py cleaned_candidate_labels_l.h5
+
