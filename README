@@ -45,3 +45,8 @@ Segmentations: /projects/nikhil/EC_data/CompleteADNIScreeningData
 
   ./hdfmerge.py mni_candidates_l/ candidate_labels_l.h5
   ./hdfmerge.py mni_candidates_r/ candidate_labels_r.h5
+
+## Remove outlier labels, flatten, and drop mostly empty voxels
+
+  ./remove_outliers.py candidate_labels_l.h5 cleaned_candidate_labels_l.h5
+  ./remove_outliers.py candidate_labels_r.h5 cleaned_candidate_labels_r.h5

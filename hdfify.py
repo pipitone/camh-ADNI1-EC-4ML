@@ -57,16 +57,16 @@ if __name__ == '__main__':
 
     # Get bounding box from average
     fullmask = volumeFromFile(maskfile).data
+    fullmask = np.logical_and(fullmask > (labelval - .5), fullmask < (labelval + .5))
 
     # compute bounding box
-    maskidx = np.argwhere(np.logical_and(fullmask > labelval - .5, fullmask < labelval + .5))
+    maskidx = np.argwhere(fullmask)
     minidx = maskidx.min(0) - maskpad
     maxidx = maskidx.max(0) + maskpad 
     mask = fullmask[minidx[0]:maxidx[0],minidx[1]:maxidx[1],minidx[2]:maxidx[2]]
 
     # indices to extract at first
     print "Mask bounding box: ", minidx, maxidx
-    print
 
     ###########################################################################
     # Build data array
@@ -78,28 +78,24 @@ if __name__ == '__main__':
     else: 
         fileh = tb.open_file(datafile, mode='w', title="data", filters=FILTERS)
 
-    if not 'files' in fileh.root:
-        _ = fileh.create_array(fileh.root,'files',labelfiles)
-    if not 'mask' in fileh.root:
-        _ = fileh.create_array(fileh.root,'mask',mask)
-    if not 'cropbbox_min' in fileh.root:
-        _ = fileh.create_array(fileh.root,'cropbbox_min', minidx) 
-    if not 'cropbbox_max' in fileh.root:
-        _ = fileh.create_array(fileh.root,'cropbbox_max', maxidx) 
-    if not 'data' in fileh.root:
-        print "Loading data into {}".format(datafile)
-        dataarray = fileh.createEArray(fileh.root,'data',tb.BoolAtom(), 
-                shape=[0]+list(mask.shape))
+    _ = fileh.create_array(fileh.root,'files',labelfiles)
+    _ = fileh.create_array(fileh.root,'mask',mask)
+    _ = fileh.create_array(fileh.root,'cropbbox_min', minidx) 
+    _ = fileh.create_array(fileh.root,'cropbbox_max', maxidx) 
 
-        t0 = time()
-        for i, labelfile in enumerate(labelfiles):
-            if i>0 and i % printfreq == 0: 
-                progress(i,len(labelfiles),time()-t0,printfreq)
-                t0 = time()
+    print "Loading data into {}".format(datafile)
+    dataarray = fileh.createEArray(fileh.root,'data',tb.BoolAtom(), 
+            shape=[0]+list(mask.shape))
 
-            data = volumeFromFile(labelfile).data[
-                minidx[0]:maxidx[0],
-                minidx[1]:maxidx[1],
-                minidx[2]:maxidx[2]] == labelval
-            data = np.logical_and(data > labelval - .5, data < labelval + .5)
-            dataarray.append(data[np.newaxis,:])
+    t0 = time()
+    for i, labelfile in enumerate(labelfiles):
+        if i>0 and i % printfreq == 0: 
+            progress(i,len(labelfiles),time()-t0,printfreq)
+            t0 = time()
+
+        data = volumeFromFile(labelfile).data[
+            minidx[0]:maxidx[0],
+            minidx[1]:maxidx[1],
+            minidx[2]:maxidx[2]]
+        data = np.logical_and(data > (labelval-.5), data < (labelval+.5))
+        dataarray.append(data[np.newaxis,:])
