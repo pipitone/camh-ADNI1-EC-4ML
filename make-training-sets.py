@@ -55,6 +55,16 @@ if __name__ == '__main__':
     assert len(AD_IDs + CN_IDs + MC_IDs) == len(classmap.keys()), \
             len(AD_IDs + CN_IDs + MC_IDs)
 
+    print "Number of subjects before matching: AD={}, MCI={}, CN={}".format(len(AD_IDs), len(MC_IDs), len(CN_IDs))
+
+    # we need equal number of subjects in each group
+    mingroupsize = min([len(AD_IDs), len(MC_IDs), len(CN_IDs)])
+    AD_IDs = AD_IDs[:mingroupsize]
+    MC_IDs = MC_IDs[:mingroupsize]
+    CN_IDs = CN_IDs[:mingroupsize]
+
+    print "Number of subjects after matching: AD={}, MCI={}, CN={}".format(len(AD_IDs), len(MC_IDs), len(CN_IDs))
+
     # shuffle each group
     random.shuffle(AD_IDs)
     random.shuffle(MC_IDs)
@@ -71,7 +81,7 @@ if __name__ == '__main__':
     valid_IDs = set(AD_IDs[AD_n*5:AD_n*6] + MC_IDs[MC_n*5:MC_n*6] + CN_IDs[CN_n*5:CN_n*6])
     test_IDs  = set(AD_IDs[AD_n*6:]       + MC_IDs[MC_n*6:]       + CN_IDs[CN_n*6:])
 
-    assert len(train_IDs)+len(valid_IDs)+len(test_IDs) == len(classmap.keys()), \
+    assert len(train_IDs)+len(valid_IDs)+len(test_IDs) == mingroupsize*3, \
         len(train_IDs)+len(valid_IDs)+len(test_IDs)
 
     data = inputh.root.data
