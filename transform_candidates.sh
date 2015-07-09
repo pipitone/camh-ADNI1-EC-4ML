@@ -15,7 +15,7 @@ model=/opt/quarantine/CIVET/1.1.12/build/share/mni-models/mni_adni_t1w_tal_nlin_
 regtmp=$(mktemp -d)
 
 i=0
-find $tmp -name labels.mnc | while read lbl; do 
+find $tmp -name '*.mnc' | while read lbl; do 
   mincresample -transform $xfm \
     -quiet \
     -keep -near \

@@ -7,8 +7,8 @@ Usage:
     hd5ify.py [options] <mask> <labelval> <imagedir> <hfile.h5>
 
 Arguments: 
-    <mask>                Mask for 1st stage filtering
-    <labelval>            Label to select from the mask when computing bounding box
+    <mask>                Mask for bounding box
+    <labelval>            Mask label to use 
     <imagedir>            Folder full of minc label files
     <hfile.h5>            Output file. 
 
