@@ -1,18 +1,15 @@
-A project to prepare Entorhinal Cortex segmentations of ADNI images for machine
-learning applications. 
+A project to prepare Hippocampal labels of ADNI images for machine learning
+applications. 
+
+This is branch is for the HC labels only, but follows the work done on the
+master branch for EC
 
 Registered images:  /projects/nikhil/EC_data/mni_registered_data
-Segmentations: /projects/nikhil/EC_data/CompleteADNIScreeningData
+Segmentations: /scratch/jp/ADNI_EC/candidate_labels/
 
  - candidate_labels/ - a copy of all tarballs from nikhil
- - mni_candidates - candidate labels in mni space
+ - mni_candidates/ - candidate labels in mni space
  - mni_fused - fused labels in mni space
-
-## Prepare candidate labels
-
-  mkdir candidate_labels 
-  cp -s /projects/nikhil/EC_data/CompleteADNIScreeningData/batch*/* \
-    candidate_labels/
 
 ## Transforming candidate labels into mni space: 
 
@@ -22,20 +19,18 @@ Segmentations: /projects/nikhil/EC_data/CompleteADNIScreeningData
     echo ./transform_candidates.sh $i mni_candidates/$(basename $i); 
   done | parallel -j24
 
-## Transforming fused labels into mni space: 
-
-  mkdir mni_fused
-  ./transform_fused.sh | parallel -j24
+  for i in mni_candidates/*_everything.tar; do
+     mv ${i} ${i/_everything/}
+  done
   
-
 ## Get bounding box for candidate labels
 
-  mincmath -max -quiet mni_fused/* mask.mnc
+  We'll just the mask that Nikhil created by registering all of the Winterburn
+  atlases to MNI space: `HC_atlas_mni_max.mnc`
 
 ## Convert labels to hdf5 (and crop)
 
-  ./hdfify.py mask.mnc 1 mni_fused/ fused_labels_l.h5
-  ./hdfify.py mask.mnc 2 mni_fused/ fused_labels_r.h5
+  module load minc-tookit pyminc python python-extras
 
   mkdir mni_candidates_{l,r}
   for i in mni_candidates/*.tar; do 

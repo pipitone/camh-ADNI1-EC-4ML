@@ -5,11 +5,11 @@ tar=$1
 lblval=$2
 dest=$3
 tmp=$(mktemp -d)
-
+mask=HC_atlas_mni_max.mnc
 filestem=$(basename $tar .tar)
 
 tar -C $tmp -xf $tar 
 
 filedir=$(dirname $(find $tmp -name '*.mnc' | head -n1))
-./hdfify.py mask.mnc ${lblval} $filedir $dest
+./hdfify.py $mask ${lblval} $filedir $dest
 rm -rf $tmp 
