@@ -100,6 +100,6 @@ if __name__ == '__main__':
             data = volumeFromFile(labelfile).data[
                 minidx[0]:maxidx[0],
                 minidx[1]:maxidx[1],
-                minidx[2]:maxidx[2]] == labelval
+                minidx[2]:maxidx[2]]
             data = np.logical_and(data > labelval - .5, data < labelval + .5)
             dataarray.append(data[np.newaxis,:])
