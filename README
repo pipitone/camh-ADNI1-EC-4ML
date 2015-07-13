@@ -30,13 +30,31 @@ Segmentations: /scratch/jp/ADNI_EC/candidate_labels/
 
 ## Convert labels to hdf5 (and crop)
 
-  module load minc-tookit pyminc python python-extras
+  module load minc-tookit pyminc python python-extras SGE-extras
 
   mkdir mni_candidates_{l,r}
   for i in mni_candidates/*.tar; do 
     echo ./hdf_candidates.sh $i 1 mni_candidates_l/$(basename $i .tar)_l.h5; 
     echo ./hdf_candidates.sh $i 2 mni_candidates_r/$(basename $i .tar)_r.h5; 
-  done  | parallel -j24
+  done > hdfify.jobs
+
+  sge_submit_array hdfify.jobs -N HC_hdfify-
 
   ./hdfmerge.py mni_candidates_l/ candidate_labels_l.h5
   ./hdfmerge.py mni_candidates_r/ candidate_labels_r.h5
+
+
+## Remove outlier labels, flatten, and drop mostly empty voxels
+
+    ./remove_outliers.py candidate_labels_l.h5 cleaned_candidate_labels_l.h5
+    ./remove_outliers.py candidate_labels_r.h5 cleaned_candidate_labels_r.h5
+
+## Add classes and IDs 
+
+    ./add-classes.py cleaned_candidate_labels_r.h5
+    ./add-classes.py cleaned_candidate_labels_l.h5
+
+## Divide into train, test and validation sets
+
+    ./make-training-sets.py cleaned_candidate_labels_l.h5 training_l.h5
+    ./make-training-sets.py cleaned_candidate_labels_r.h5 training_r.h5
